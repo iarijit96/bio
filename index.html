@@ -75,6 +75,8 @@
       border-bottom: 1px solid rgba(59,130,246,0.15);
     }
 
+    .brand-short { display: none; }
+
     .nav-brand {
       font-family: 'DM Mono', monospace;
       font-size: 0.72rem;
@@ -82,6 +84,7 @@
       letter-spacing: 0.22em;
       color: var(--accent);
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .nav-links {
@@ -702,13 +705,22 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
-      #hero { grid-template-columns: 1fr; padding: 7rem 2rem 3rem; gap: 2rem; }
+      #hero-shell { min-height: unset; }
+      #hero {
+        grid-template-columns: 1fr;
+        min-height: unset;
+        padding: 5rem 1.5rem 3rem;
+        align-items: flex-start;
+      }
       .hero-photo { display: none; }
       .container { padding: 3.5rem 1.5rem; }
       .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
       nav { padding: 1rem 1.5rem; }
       .nav-links { gap: 1rem; }
-      footer { padding: 2rem 1.5rem; } .footer-inner { flex-direction: column; gap: 1.2rem; text-align: center; }
+      footer { padding: 2rem 1.5rem; }
+      .footer-inner { flex-direction: column; gap: 1.2rem; text-align: center; }
+      .brand-full { display: none; }
+      .brand-short { display: inline; }
     }
   </style>
 </head>
@@ -716,7 +728,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-brand">Arijit - Chemistry - IIT Bombay</div>
+  <div class="nav-brand"><span class="brand-full">Arijit - Chemistry - IIT Bombay</span><span class="brand-short">Arijit · IIT Bombay</span></div>
   <ul class="nav-links">
     <li><a href="#hero">Home</a></li>
     <li><a href="#about">Research</a></li>
@@ -753,7 +765,7 @@
       </div>
     </div>
 </section>
-</div><!-- end #hero-shell -->
+</div>
 
 <!-- ABOUT / RESEARCH -->
 <section id="about" class="light-section">
