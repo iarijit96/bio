@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Publications | Arijit Das Adhikary</title>
+  <meta name="description" content="Selected publications by Arijit Das Adhikary."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <noscript><style>.reveal{opacity:1!important;transform:none!important}.hero-photo{opacity:1!important;animation:none!important}</style></noscript>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">Arijit - Chemistry - IIT Bombay</a>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="publications.html" class="active">Publications</a></li>
+    <li><a href="experience.html">Experience</a></li>
+    <li><a href="education.html">Education</a></li>
+    <li><a href="highlights.html">Highlights</a></li>
+  </ul>
+</nav>
+
+<section id="publications">
+  <div class="container">
+    <div class="section-label">Publications</div>
+    <h2>Selected Works</h2>
+    <div class="pub-card reveal">
+      <div class="pub-journal">Science Advances · 2025</div>
+      <div class="pub-title">Mechanistic insights into 50S precursor recognition and targeting by erythromycin resistance methyltransferase.</div>
+      <div class="pub-authors">
+        Sombuddha Sengupta, Rajat Mukherjee, Michael Pilsl, Siddharam Bagale,
+        <strong>Arijit Das Adhikary</strong>, Aditi N. Borkar,
+        Pushpangadan Indira Pradeepkumar, Christoph Engel, Arindam Chowdhury,
+        Prem S. Kaushal, Ruchi Anand*
+      </div>
+      <a class="pub-link" href="https://www.science.org/doi/epdf/10.1126/sciadv.aea1545" target="_blank">Read Paper →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+  <div class="footer-name">© 2025 Arijit Das Adhikary</div>
+  <div class="footer-links">
+    <a href="https://scholar.google.com/citations?user=nxR1BeMAAAAJ" target="_blank">Scholar</a>
+    <a href="https://orcid.org/0009-0005-9347-6562" target="_blank">ORCID</a>
+    <a href="https://x.com/iarijit_" target="_blank">Twitter / X</a>
+    <a href="https://www.linkedin.com/in/arijit-das-adhikary-690660156/" target="_blank">LinkedIn</a>
+  </div>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('visible'));
+  } else {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+  }
+
+  // mobile nav
+  const toggle = document.querySelector('.nav-toggle');
+  const links  = document.querySelector('.nav-links');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const open = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+      toggle.textContent = open ? '✕' : '☰';
+    });
+  }
+</script>
+</body>
+</html>
