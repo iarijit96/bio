@@ -353,7 +353,6 @@
 
     /* ── ABOUT ── */
     #about,
-    #home-intro,
     #notfound {
       background: var(--surface);
       border-top: 1px solid var(--border-light);
@@ -732,7 +731,6 @@ a.nav-brand:hover { color: var(--accent2); }
 
 /* content pages sit below the fixed nav */
 body > section:not(#hero) > .container { padding-top: 7.5rem; }
-body > #hero-shell + section > .container { padding-top: 5rem; }
 
 /* "read more" link on the home page teaser */
 .more-link { margin-top: 1.6rem; }
