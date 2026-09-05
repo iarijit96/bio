@@ -391,7 +391,7 @@ h2 {
 
 /* every content section is a translucent pane over the canvas */
 body > section:not(#hero) {
-  background: linear-gradient(180deg, rgba(8, 19, 31, 0.72), rgba(5, 13, 24, 0.88));
+  background: linear-gradient(180deg, rgba(8, 19, 31, 0.36), rgba(5, 13, 24, 0.54));
   border-top: 1px solid var(--border-soft);
   border-bottom: 1px solid var(--border-soft);
   backdrop-filter: blur(3px);
@@ -589,7 +589,12 @@ body > section:not(#hero) {
 .edu-detail a:hover { text-decoration: underline; }
 
 /* ── HIGHLIGHTS ─────────────────────────────────────────── */
-#highlights h2 { margin-bottom: 2.5rem; }
+/* standalone page headings — no section-label pill above them */
+#highlights h2,
+#publications h2 {
+  font-size: clamp(2.4rem, 4.2vw, 4rem);
+  margin-bottom: 2.5rem;
+}
 
 .timeline-year-group { margin-bottom: 2.5rem; }
 
