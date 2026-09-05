@@ -1,29 +1,42 @@
 /* ══════════════════════════════════════════════════════════
-   molecular-bg.js — generated background animations
+   molecular-bg.js — floating microbiology background
 
-   Two scenes, chosen automatically by page:
+   One scene on every page: viruses, bacteria, short DNA
+   duplexes and proteins drifting and tumbling in 3D, all
+   drawn in a space-filling / surface style.
 
-   • SPLICING  (home page — any page containing #hero)
-     The spliceosome cycle, drawn as a slow narrative loop:
-     pre-mRNA → snRNP docking → lariat formation → exon
-     ligation → intron release → reset. Mechanistically
-     ordered: U1 at the 5' splice site, U2 at the branch
-     point, tri-snRNP between them; the branch-point
-     adenosine attacks the 5' splice site to form the lariat,
-     then exon 1's 3'-OH attacks the 3' splice site.
+   PROTEIN COORDINATES ARE REAL. The Cα traces below were
+   extracted from these Protein Data Bank entries and
+   normalised onto a unit sphere:
 
-   • SCALE  (every other page)
-     Microbial size comparison at TRUE relative scale — one
-     shared px-per-micron factor for every organism, so a
-     100 nm virion really is 1/75th of a red blood cell.
-     A scale bar is drawn so the comparison means something.
+     HVR  1HVR  HIV-1 protease dimer          198 Cα
+     E43  4E43  hydrolase                     204 Cα
+     ADK        adenylate kinase, closed      214 Cα
+     CBT  1V6P  cobrotoxin                     62 Cα
 
-   All geometry is generated from parameters in this file.
-   No images, no libraries, no network requests, no third-
-   party assets of any kind.
+   PDB coordinate data is in the public domain.
+
+   The DNA duplex is generated from ideal B-form parameters
+   (3.4 Å rise, 34.3° twist, 10 Å backbone radius) rather
+   than a deposited structure — ideal geometry is cleaner at
+   this size than a real crystal structure would be. The
+   capsid is a geodesic subdivision of an icosahedron, which
+   is the arrangement real icosahedral capsids adopt. The
+   bacterium is a drawn cell outline, not a molecular model —
+   a cell is not a molecule and is deliberately not rendered
+   as a surface.
+
+   No images, no libraries, no network requests.
    ══════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
+
+  var PDB = {
+    HVR: [-0.035,0.68,0.066,-0.093,0.615,-0.037,-0.019,0.516,-0.095,-0.05,0.479,-0.223,-0.006,0.354,-0.252,0.068,0.37,-0.366,0.178,0.358,-0.288,0.2,0.272,-0.184,0.144,0.337,-0.077,0.26,0.348,-0.004,0.275,0.424,0.105,0.374,0.458,0.193,0.367,0.404,0.321,0.44,0.417,0.436,0.442,0.311,0.521,0.537,0.28,0.613,0.604,0.398,0.585,0.625,0.352,0.456,0.576,0.401,0.341,0.519,0.313,0.251,0.431,0.316,0.148,0.323,0.235,0.143,0.22,0.205,0.059,0.093,0.243,0.091,0.025,0.124,0.08,-0.112,0.108,0.09,-0.106,-0.027,0.069,-0.023,-0.05,0.174,-0.085,-0.067,0.293,0.028,-0.039,0.366,0.147,0.026,0.356,0.261,-0.045,0.323,0.388,0.007,0.323,0.502,-0.043,0.281,0.594,-0.081,0.373,0.616,0.016,0.468,0.657,0.04,0.594,0.548,0.062,0.67,0.552,0.09,0.803,0.474,-0.001,0.864,0.434,-0.13,0.875,0.368,-0.197,0.775,0.289,-0.303,0.745,0.312,-0.388,0.636,0.211,-0.384,0.544,0.2,-0.429,0.416,0.135,-0.365,0.319,0.098,-0.404,0.195,0.107,-0.337,0.077,0.104,-0.364,-0.054,0.2,-0.458,-0.057,0.195,-0.515,0.066,0.221,-0.492,0.197,0.315,-0.418,0.259,0.35,-0.418,0.393,0.351,-0.295,0.452,0.366,-0.241,0.578,0.257,-0.173,0.626,0.285,-0.063,0.702,0.183,0.007,0.758,0.17,0.138,0.793,0.266,0.182,0.703,0.266,0.316,0.669,0.274,0.348,0.537,0.265,0.469,0.473,0.213,0.455,0.346,0.223,0.578,0.287,0.201,0.664,0.394,0.113,0.576,0.453,0.139,0.501,0.564,0.079,0.379,0.583,0.106,0.284,0.678,0.081,0.153,0.65,0.124,0.031,0.615,0.228,0.016,0.53,0.273,-0.105,0.482,0.404,-0.112,0.446,0.449,-0.201,0.356,0.498,-0.233,0.232,0.412,-0.162,0.157,0.459,-0.115,0.038,0.402,0.008,0.063,0.363,0.078,0.174,0.224,0.073,0.178,0.137,0.154,0.25,0.019,0.088,0.263,-0.106,0.11,0.308,-0.075,0.105,0.44,-0.005,0.224,0.428,-0.075,0.275,0.321,-0.187,0.287,0.396,-0.116,0.358,0.49,-0.073,0.454,0.406,-0.198,0.46,0.353,-0.171,0.413,0.228,-0.275,0.387,0.14,-0.292,0.338,0.015,-0.37,0.408,-0.069,-0.42,0.383,-0.192,-0.57,0.364,-0.064,-0.485,0.392,0.037,-0.44,0.278,0.097,-0.391,0.285,0.225,-0.306,0.182,0.257,-0.354,0.128,0.373,-0.39,0.019,0.297,-0.332,-0.034,0.183,-0.364,0.045,0.075,-0.43,-0.051,0.001,-0.51,-0.026,-0.107,-0.585,-0.099,-0.195,-0.532,-0.115,-0.32,-0.581,-0.169,-0.434,-0.492,-0.228,-0.517,-0.51,-0.32,-0.617,-0.644,-0.327,-0.588,-0.617,-0.368,-0.458,-0.634,-0.3,-0.342,-0.53,-0.293,-0.251,-0.491,-0.214,-0.145,-0.365,-0.163,-0.145,-0.283,-0.094,-0.061,-0.253,0.035,-0.096,-0.118,0.036,-0.081,-0.039,0.149,-0.093,0.073,0.077,-0.065,0.059,-0.004,-0.175,0.102,0.039,-0.293,0.021,-0.044,-0.365,-0.095,-0.115,-0.356,-0.089,-0.251,-0.324,-0.202,-0.329,-0.324,-0.216,-0.453,-0.275,-0.225,-0.553,-0.367,-0.333,-0.529,-0.441,-0.355,-0.558,-0.573,-0.347,-0.451,-0.651,-0.346,-0.453,-0.785,-0.239,-0.436,-0.868,-0.104,-0.444,-0.884,-0.009,-0.419,-0.789,0.122,-0.418,-0.749,0.179,-0.463,-0.632,0.237,-0.373,-0.548,0.283,-0.386,-0.419,0.248,-0.3,-0.321,0.305,-0.283,-0.2,0.245,-0.258,-0.079,0.265,-0.279,0.05,0.301,-0.407,0.057,0.347,-0.412,-0.07,0.302,-0.432,-0.194,0.203,-0.488,-0.267,0.193,-0.511,-0.401,0.086,-0.446,-0.454,0.029,-0.443,-0.576,0.009,-0.323,-0.627,-0.09,-0.277,-0.705,-0.092,-0.152,-0.753,-0.201,-0.078,-0.79,-0.29,-0.136,-0.702,-0.407,-0.072,-0.67,-0.433,-0.058,-0.538,-0.537,0.004,-0.477,-0.496,0.045,-0.352,-0.598,0.09,-0.276,-0.669,0.117,-0.389,-0.566,0.193,-0.449,-0.508,0.138,-0.561,-0.374,0.123,-0.589,-0.298,0.047,-0.675,-0.171,0.005,-0.652,-0.087,-0.095,-0.614,-0.131,-0.191,-0.529,-0.046,-0.286,-0.48,-0.104,-0.406,-0.445,-0.044,-0.497,-0.364,-0.044,-0.551,-0.24,-0.063,-0.44,-0.162,-0.132,-0.458,-0.046,-0.205,-0.341,-0.063,-0.246,-0.276,-0.176,-0.175,-0.156,-0.181,-0.203,-0.042,-0.251,-0.084,0.024,-0.262,-0.043,0.145,-0.307,-0.052,0.118,-0.439,-0.187,0.119,-0.43,-0.199,0.201,-0.32,-0.152,0.299,-0.398,-0.251,0.28,-0.493,-0.353,0.283,-0.406,-0.3,0.399,-0.357,-0.271,0.357,-0.23,-0.199,0.436,-0.143,-0.146,0.425,-0.018,-0.171,0.529,0.066,-0.13,0.562,0.191],
+    E43: [-0.5,0.461,-0.042,-0.499,0.375,0.064,-0.465,0.249,0.026,-0.491,0.144,0.109,-0.412,0.033,0.107,-0.504,-0.067,0.104,-0.462,-0.088,-0.025,-0.349,-0.058,-0.092,-0.342,0.078,-0.111,-0.344,0.075,-0.247,-0.358,0.193,-0.315,-0.356,0.237,-0.443,-0.245,0.304,-0.482,-0.212,0.366,-0.599,-0.084,0.358,-0.646,-0.027,0.378,-0.768,-0.153,0.387,-0.818,-0.187,0.263,-0.771,-0.283,0.241,-0.676,-0.244,0.145,-0.588,-0.283,0.089,-0.47,-0.194,0.1,-0.367,-0.184,0.067,-0.235,-0.162,0.166,-0.142,-0.059,0.11,-0.075,-0.012,0.169,0.039,0.08,0.068,0.052,0.14,0.101,-0.066,0.241,0.193,-0.07,0.228,0.202,-0.204,0.131,0.201,-0.3,0.14,0.091,-0.38,0.067,0.068,-0.492,0.056,-0.038,-0.576,0.128,-0.034,-0.692,0.104,0.075,-0.768,0.174,0.169,-0.836,0.194,0.291,-0.779,0.255,0.403,-0.831,0.382,0.439,-0.799,0.494,0.371,-0.762,0.492,0.272,-0.67,0.581,0.204,-0.592,0.573,0.078,-0.54,0.545,0.057,-0.409,0.522,-0.05,-0.328,0.417,-0.047,-0.242,0.386,-0.139,-0.147,0.287,-0.183,-0.067,0.222,-0.299,-0.041,0.274,-0.392,-0.127,0.391,-0.326,-0.149,0.428,-0.237,-0.244,0.394,-0.201,-0.371,0.461,-0.124,-0.461,0.391,-0.014,-0.501,0.412,0.097,-0.578,0.413,0.216,-0.513,0.357,0.326,-0.573,0.362,0.447,-0.513,0.279,0.555,-0.518,0.171,0.485,-0.561,0.047,0.541,-0.553,-0.055,0.466,-0.506,-0.185,0.49,-0.472,-0.231,0.421,-0.364,-0.366,0.434,-0.345,-0.352,0.552,-0.412,-0.252,0.597,-0.332,-0.142,0.628,-0.406,-0.023,0.583,-0.357,0.103,0.581,-0.407,0.205,0.499,-0.372,0.278,0.389,-0.398,0.213,0.282,-0.451,0.269,0.158,-0.459,0.23,0.072,-0.558,0.245,-0.063,-0.558,0.195,-0.187,-0.53,0.119,-0.152,-0.422,0.011,-0.232,-0.399,-0.065,-0.12,-0.381,-0.057,0.015,-0.405,-0.02,0.074,-0.288,-0.026,0.206,-0.252,0.069,0.22,-0.156,0.098,0.317,-0.065,0.168,0.395,-0.153,0.05,0.427,-0.214,-0.037,0.406,-0.11,0.02,0.512,-0.045,-0.001,0.593,-0.153,-0.136,0.575,-0.148,-0.138,0.594,-0.013,-0.167,0.464,0.017,-0.163,0.431,0.15,-0.191,0.323,0.229,-0.282,0.35,0.327,-0.327,0.279,0.434,-0.191,0.408,0.505,-0.171,0.46,0.38,-0.062,0.409,0.319,-0.007,0.471,0.211,0.067,0.403,0.12,0.182,0.475,0.104,0.243,0.376,0.175,0.211,0.244,0.185,0.101,0.23,0.265,0.167,0.16,0.361,0.104,0.143,0.48,0.123,0.073,0.594,0.051,-0.042,0.61,0.047,-0.128,0.715,0.036,-0.262,0.702,0.059,-0.358,0.796,0.096,-0.258,0.882,0.195,-0.216,0.798,0.206,-0.097,0.732,0.235,-0.1,0.6,0.234,-0.009,0.498,0.148,-0.03,0.394,0.109,0.032,0.279,-0.02,0.07,0.263,-0.039,0.018,0.14,-0.153,0.041,0.068,-0.101,-0.03,-0.036,-0.103,-0.144,0.039,-0.213,-0.224,0.052,-0.157,-0.285,0.16,-0.076,-0.261,0.266,0.047,-0.318,0.254,0.141,-0.318,0.352,0.272,-0.355,0.353,0.307,-0.476,0.404,0.266,-0.486,0.533,0.201,-0.575,0.613,0.065,-0.574,0.63,-0.02,-0.654,0.701,-0.098,-0.753,0.651,-0.102,-0.815,0.531,-0.077,-0.763,0.409,-0.116,-0.792,0.283,-0.054,-0.768,0.164,-0.074,-0.658,0.088,-0.019,-0.614,-0.027,-0.012,-0.48,-0.044,0.031,-0.403,-0.148,0.104,-0.289,-0.145,0.176,-0.212,-0.23,0.272,-0.309,-0.25,0.193,-0.42,-0.256,0.137,-0.51,-0.17,0.176,-0.554,-0.047,0.131,-0.646,0.042,0.093,-0.6,0.164,0.04,-0.65,0.279,-0.088,-0.611,0.305,-0.124,-0.593,0.435,-0.253,-0.559,0.462,-0.311,-0.486,0.563,-0.194,-0.429,0.604,-0.194,-0.323,0.69,-0.123,-0.217,0.642,-0.124,-0.086,0.681,-0.098,0.008,0.586,-0.071,0.135,0.629,-0.14,0.104,0.742,-0.248,0.056,0.673,-0.28,-0.073,0.698,-0.301,-0.161,0.597,-0.321,-0.296,0.594,-0.306,-0.359,0.475,-0.231,-0.428,0.388,-0.097,-0.408,0.389,-0.014,-0.464,0.295,0.116,-0.491,0.326,0.215,-0.503,0.235,0.319,-0.446,0.168,0.268,-0.322,0.152,0.359,-0.22,0.14,0.289,-0.15,0.234,0.185,-0.171,0.32,0.073,-0.133,0.254,-0.051,-0.102,0.302,-0.138,-0.133,0.202,-0.269,-0.104,0.179,-0.315,-0.206,0.256,-0.272,-0.138,0.368,-0.275,-0.011,0.318,-0.411,-0.025,0.311,-0.414,-0.066,0.441,-0.356,0.049,0.485,-0.438,0.125,0.406,-0.34,0.165,0.32,-0.375,0.232,0.206,-0.31,0.296,0.103,-0.343,0.427,0.088,-0.317,0.524,-0.004,0.214,-0.013,-0.102,0.136,-0.086,-0.019,0.023,-0.114,-0.089,-0.021,-0.236,-0.049,-0.123,-0.315,-0.094,-0.18,-0.432,-0.055],
+    ADK: [-0.196,0.636,0.129,-0.092,0.55,0.058,-0.019,0.429,0.113,0.084,0.325,0.063,0.089,0.189,0.131,0.23,0.134,0.141,0.282,-0.001,0.192,0.31,-0.146,0.158,0.222,-0.249,0.085,0.116,-0.284,0.191,0.149,-0.168,0.284,-0.001,-0.135,0.301,-0.016,-0.02,0.202,-0.146,-0.057,0.127,-0.211,-0.106,0.257,-0.19,0.031,0.317,-0.217,0.103,0.185,-0.363,0.06,0.194,-0.377,0.129,0.329,-0.311,0.258,0.278,-0.405,0.257,0.158,-0.537,0.236,0.235,-0.501,0.333,0.346,-0.433,0.448,0.271,-0.51,0.438,0.138,-0.388,0.433,0.047,-0.381,0.327,-0.064,-0.282,0.211,-0.057,-0.189,0.206,-0.178,-0.13,0.066,-0.168,-0.036,0.027,-0.282,-0.045,-0.12,-0.248,-0.196,-0.121,-0.256,-0.195,-0.038,-0.384,-0.095,-0.136,-0.447,-0.175,-0.258,-0.398,-0.303,-0.196,-0.45,-0.242,-0.161,-0.586,-0.18,-0.3,-0.602,-0.313,-0.367,-0.57,-0.402,-0.278,-0.657,-0.294,-0.283,-0.765,-0.282,-0.132,-0.765,-0.187,-0.075,-0.869,-0.11,0.007,-0.768,-0.068,-0.096,-0.663,-0.092,-0.236,-0.721,0.058,-0.249,-0.75,0.088,-0.253,-0.601,0.037,-0.396,-0.579,0.165,-0.476,-0.598,0.246,-0.371,-0.522,0.153,-0.375,-0.4,0.148,-0.528,-0.402,0.302,-0.529,-0.406,0.306,-0.444,-0.278,0.377,-0.33,-0.349,0.343,-0.183,-0.364,0.267,-0.132,-0.485,0.337,-0.028,-0.574,0.335,0.115,-0.522,0.269,0.183,-0.644,0.153,0.082,-0.648,0.123,0.105,-0.5,0.147,0.256,-0.514,0.044,0.26,-0.626,-0.06,0.181,-0.542,-0.04,0.278,-0.426,-0.048,0.403,-0.515,-0.179,0.353,-0.578,-0.236,0.324,-0.44,-0.195,0.461,-0.382,-0.272,0.535,-0.492,-0.405,0.48,-0.439,-0.484,0.588,-0.364,-0.492,0.509,-0.232,-0.341,0.53,-0.21,-0.354,0.683,-0.209,-0.361,0.691,-0.057,-0.247,0.591,-0.04,-0.222,0.446,-0.055,-0.154,0.33,0.011,-0.037,0.27,-0.066,-0.02,0.122,-0.033,0.099,0.052,-0.097,0.144,0.171,-0.18,0.25,0.225,-0.185,0.322,0.092,-0.18,0.455,0.139,-0.236,0.538,0.267,-0.239,0.493,0.3,-0.385,0.347,0.289,-0.344,0.371,0.387,-0.229,0.445,0.482,-0.323,0.329,0.472,-0.422,0.236,0.527,-0.313,0.329,0.646,-0.291,0.328,0.699,-0.434,0.18,0.665,-0.451,0.149,0.76,-0.334,0.093,0.656,-0.24,0.14,0.686,-0.097,0.092,0.613,0.028,0.054,0.657,0.168,0.091,0.523,0.233,0.184,0.406,0.209,0.148,0.288,0.298,0.25,0.176,0.317,0.2,0.041,0.364,0.316,-0.024,0.439,0.304,-0.175,0.442,0.421,-0.273,0.456,0.452,-0.367,0.338,0.426,-0.493,0.42,0.277,-0.46,0.429,0.257,-0.439,0.279,0.24,-0.582,0.225,0.133,-0.631,0.325,0.058,-0.498,0.308,0.051,-0.514,0.157,0.017,-0.664,0.151,-0.103,-0.641,0.245,-0.151,-0.523,0.162,-0.289,-0.524,0.097,-0.342,-0.416,0.005,-0.477,-0.365,-0.034,-0.432,-0.351,-0.178,-0.54,-0.25,-0.226,-0.504,-0.147,-0.118,-0.363,-0.182,-0.074,-0.409,-0.211,0.068,-0.306,-0.294,0.141,-0.322,-0.396,0.252,-0.233,-0.5,0.32,-0.288,-0.638,0.362,-0.21,-0.636,0.494,-0.178,-0.489,0.529,-0.291,-0.406,0.472,-0.401,-0.504,0.431,-0.533,-0.468,0.366,-0.663,-0.475,0.445,-0.712,-0.597,0.37,-0.602,-0.69,0.319,-0.562,-0.668,0.174,-0.659,-0.552,0.153,-0.642,-0.401,0.144,-0.699,-0.327,0.266,-0.758,-0.217,0.179,-0.818,-0.293,0.06,-0.825,-0.438,0.108,-0.752,-0.478,-0.019,-0.65,-0.591,-0.031,-0.506,-0.557,0.007,-0.393,-0.599,-0.084,-0.243,-0.623,-0.077,-0.148,-0.539,-0.158,-0.066,-0.605,-0.269,0.062,-0.544,-0.218,0.043,-0.583,-0.07,0.133,-0.703,-0.044,0.265,-0.716,0.036,0.365,-0.71,-0.08,0.294,-0.598,-0.156,0.286,-0.519,-0.025,0.436,-0.54,-0.004,0.464,-0.485,-0.143,0.376,-0.365,-0.108,0.456,-0.338,0.02,0.591,-0.341,-0.055,0.533,-0.24,-0.156,0.481,-0.157,-0.037,0.62,-0.151,0.027,0.693,-0.11,-0.1,0.591,-0.021,-0.167,0.485,0.028,-0.07,0.564,0.042,0.06,0.641,0.171,0.018,0.506,0.245,0.018,0.512,0.251,0.171,0.637,0.337,0.161,0.574,0.414,0.046,0.448,0.457,0.122,0.524,0.478,0.252,0.602,0.58,0.172,0.474,0.645,0.12,0.422,0.653,0.264,0.556,0.714,0.309,0.537,0.819,0.199,0.391,0.838,0.243,0.321,0.79,0.118,0.251,0.674,0.188,0.224,0.613,0.325,0.293,0.481,0.352,0.243,0.381,0.454,0.276,0.237,0.482,0.177,0.14,0.545,0.201,0.006,0.611,0.131,-0.089,0.516,0.148,-0.206,0.612,0.036,-0.156,0.701,-0.11,-0.2,0.691,-0.188,-0.14,0.572,-0.274,-0.054,0.664,-0.151,0.0,0.736,-0.08,0.034,0.605,-0.211,0.102,0.568,-0.204,0.182,0.699,-0.059,0.225,0.677,-0.093,0.266,0.534,-0.216,0.342,0.585,-0.123,0.42,0.68,-0.027,0.46,0.567,-0.135,0.514,0.472,-0.261,0.567,0.542],
+    CBT: [0.157,-0.414,-0.403,0.006,-0.33,-0.449,-0.011,-0.229,-0.3,-0.164,-0.139,-0.264,-0.129,0.038,-0.267,-0.292,0.116,-0.225,-0.283,0.254,-0.105,-0.411,0.261,0.03,-0.555,0.15,0.054,-0.604,0.184,-0.117,-0.618,0.08,-0.271,-0.48,-0.041,-0.289,-0.348,-0.013,-0.41,-0.207,-0.12,-0.453,-0.046,-0.09,-0.527,0.093,-0.195,-0.575,0.261,-0.153,-0.512,0.423,-0.146,-0.596,0.549,-0.276,-0.604,0.649,-0.29,-0.456,0.507,-0.25,-0.35,0.451,-0.381,-0.242,0.343,-0.292,-0.125,0.173,-0.218,-0.112,0.134,-0.101,0.025,-0.003,-0.027,0.107,0.009,0.106,0.232,-0.134,0.171,0.33,-0.127,0.322,0.431,-0.243,0.424,0.522,-0.258,0.599,0.48,-0.368,0.723,0.548,-0.527,0.636,0.564,-0.499,0.502,0.44,-0.394,0.368,0.387,-0.29,0.382,0.24,-0.227,0.234,0.149,-0.105,0.219,0.016,-0.054,0.073,-0.075,0.074,0.035,-0.202,0.221,-0.058,-0.253,0.369,-0.059,-0.15,0.39,-0.069,0.036,0.422,0.088,0.123,0.5,0.109,0.287,0.396,0.125,0.435,0.375,0.294,0.513,0.297,0.352,0.66,0.113,0.326,0.658,0.091,0.26,0.49,0.015,0.092,0.505,0.104,-0.001,0.376,0.119,-0.167,0.292,0.213,-0.24,0.156,0.173,-0.396,0.065,0.257,-0.485,-0.076,0.119,-0.558,-0.166,-0.013,-0.51,-0.286,-0.145,-0.398,-0.228,-0.108,-0.424,-0.046,-0.092,-0.25,0.003,-0.27,-0.205,-0.017]
+  };
 
   var reduceMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -35,466 +48,306 @@
   if (!ctx) { return; }
 
   // ── palette ────────────────────────────────────────────
-  var CYAN  = '103, 232, 249';
-  var TEAL  = '45, 212, 191';
-  var GREEN = '52, 211, 153';
-  var DIM   = '120, 170, 190';
+  var HUES = {
+    cyan:  '103, 232, 249',
+    teal:  '45, 212, 191',
+    green: '52, 211, 153',
+    pale:  '148, 210, 224'
+  };
 
   var W = 0, H = 0, dpr = 1;
-  var MODE = 'scale';                 // decided at mount
+  var objects = [];
+  var sprites = {};
 
   function rand(a, b) { return a + Math.random() * (b - a); }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
-  function ease(t) { return t * t * (3 - 2 * t); }          // smoothstep
-  function rgba(hue, a) { return 'rgba(' + hue + ',' + (a < 0 ? 0 : a).toFixed(3) + ')'; }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-  /* ════════════════════════════════════════════════════════
-     SCENE 1 — SPLICING
-     ════════════════════════════════════════════════════════ */
-
-  // fractions along the transcript
-  var U_5SS = 0.20;    // 5' splice site — exon 1 / intron boundary
-  var U_BP  = 0.46;    // branch-point adenosine
-  var U_3SS = 0.56;    // 3' splice site — intron / exon 2 boundary
-
-  var CYCLE = 34;      // seconds per full splicing cycle
-
-  var sp = { y: 0, amp: 0, x0: 0, x1: 0, wob: 0 };
-
-  function splicingLayout() {
-    sp.x0  = -0.06 * W;
-    sp.x1  =  1.06 * W;
-    sp.y   =  0.74 * H;
-    sp.amp =  0.035 * H;
-    sp.wob =  1.7;                    // waves across the width
+  /* ── sphere sprite ──────────────────────────────────────
+     Every atom is one drawImage of a pre-rendered shaded
+     sphere. Building a radial gradient per atom per frame
+     would cost thousands of gradient allocations a second;
+     this costs four, once. */
+  function makeSprite(rgb) {
+    var S = 64;
+    var c = document.createElement('canvas');
+    c.width = c.height = S;
+    var g = c.getContext('2d');
+    var grd = g.createRadialGradient(S * 0.36, S * 0.33, S * 0.04,
+                                     S * 0.50, S * 0.50, S * 0.50);
+    grd.addColorStop(0.00, 'rgba(' + rgb + ',1)');
+    grd.addColorStop(0.35, 'rgba(' + rgb + ',0.78)');
+    grd.addColorStop(0.72, 'rgba(' + rgb + ',0.30)');
+    grd.addColorStop(1.00, 'rgba(' + rgb + ',0)');
+    g.fillStyle = grd;
+    g.beginPath();
+    g.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2);
+    g.fill();
+    return c;
   }
 
-  // straight (unspliced) transcript position at fraction u
-  function backbone(u, t) {
-    var x = lerp(sp.x0, sp.x1, u);
-    var y = sp.y + Math.sin(u * Math.PI * 2 * sp.wob + t * 0.22) * sp.amp;
-    return { x: x, y: y };
+  function buildSprites() {
+    for (var k in HUES) { if (HUES.hasOwnProperty(k)) { sprites[k] = makeSprite(HUES[k]); } }
   }
 
-  // unit tangent / normal of the backbone at u
-  function frame(u, t) {
-    var d = 0.002;
-    var a = backbone(Math.max(0, u - d), t), b = backbone(Math.min(1, u + d), t);
-    var dx = b.x - a.x, dy = b.y - a.y;
-    var m = Math.hypot(dx, dy) || 1;
-    return { tx: dx / m, ty: dy / m, nx: -dy / m, ny: dx / m };
-  }
+  /* ── geometry generators ───────────────────────────────── */
 
-  /* Lariat geometry.
-     The intron segment from the 5' splice site to the branch point is
-     wrapped onto a circle whose circumference equals that segment's
-     length, tangent to the backbone at the branch point. p = 0 leaves it
-     straight, p = 1 is a fully closed loop. */
-  function lariatPoint(u, t, p) {
-    var straight = backbone(u, t);
-    if (p <= 0 || u < U_5SS || u > U_BP) { return straight; }
-
-    var segLen = Math.abs(lerp(sp.x0, sp.x1, U_BP) - lerp(sp.x0, sp.x1, U_5SS));
-    var R = segLen / (Math.PI * 2);
-    var bp = backbone(U_BP, t);
-    var f = frame(U_BP, t);
-    // loop opens downward, away from the page content above
-    var sgn = f.ny >= 0 ? 1 : -1;
-    var cx = bp.x + f.nx * R * sgn, cy = bp.y + f.ny * R * sgn;
-
-    var s = (u - U_5SS) / (U_BP - U_5SS);      // 0 at 5'SS, 1 at branch point
-    var base = Math.atan2(bp.y - cy, bp.x - cx);
-    var ang = base + (1 - s) * Math.PI * 2;
-    var loop = { x: cx + Math.cos(ang) * R, y: cy + Math.sin(ang) * R };
-
-    return { x: lerp(straight.x, loop.x, p), y: lerp(straight.y, loop.y, p) };
-  }
-
-  function strandPoints(uA, uB, t, p, dx, dy) {
-    var n = Math.max(12, Math.round((uB - uA) * 190));
-    var pts = [];
-    for (var i = 0; i <= n; i++) {
-      var u = lerp(uA, uB, i / n);
-      var q = lariatPoint(u, t, p);
-      pts.push({ x: q.x + (dx || 0), y: q.y + (dy || 0) });
+  // Geodesic subdivision of an icosahedron — the arrangement
+  // icosahedral capsids actually use.
+  function capsid(freq) {
+    var t = (1 + Math.sqrt(5)) / 2;
+    var v = [[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+             [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+             [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]];
+    var f = [[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],
+             [1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],
+             [3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],
+             [4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+    var out = [], seen = {};
+    function push(p) {
+      var m = Math.hypot(p[0], p[1], p[2]);
+      var q = [p[0] / m, p[1] / m, p[2] / m];
+      var key = q[0].toFixed(3) + ',' + q[1].toFixed(3) + ',' + q[2].toFixed(3);
+      if (seen[key]) { return; }
+      seen[key] = 1;
+      out.push(q[0], q[1], q[2]);
     }
+    for (var i = 0; i < f.length; i++) {
+      var A = v[f[i][0]], B = v[f[i][1]], C = v[f[i][2]];
+      for (var a = 0; a <= freq; a++) {
+        for (var b = 0; b <= freq - a; b++) {
+          var c = freq - a - b;
+          push([(A[0] * a + B[0] * b + C[0] * c) / freq,
+                (A[1] * a + B[1] * b + C[1] * c) / freq,
+                (A[2] * a + B[2] * b + C[2] * c) / freq]);
+        }
+      }
+    }
+    return out;
+  }
+
+  // Ideal B-form DNA: 3.4 Å rise per base pair, 34.3° twist,
+  // 10 Å backbone radius, second strand offset ~140° so the
+  // minor and major grooves come out at the right widths.
+  function bdna(nbp) {
+    var RISE = 3.4, TWIST = 34.3 * Math.PI / 180, RAD = 10.0;
+    var OFFSET = 140 * Math.PI / 180;
+    var pts = [];
+    for (var i = 0; i < nbp; i++) {
+      var z = (i - (nbp - 1) / 2) * RISE;
+      var a = i * TWIST;
+      var x1 = Math.cos(a) * RAD, y1 = Math.sin(a) * RAD;
+      var x2 = Math.cos(a + OFFSET) * RAD, y2 = Math.sin(a + OFFSET) * RAD;
+      // backbone phosphates, interpolated between residues so the
+      // strands read as continuous ribbons rather than loose beads
+      for (var s = 0; s < 3; s++) {
+        var fz = z + (s / 3) * RISE, fa = a + (s / 3) * TWIST;
+        pts.push(Math.cos(fa) * RAD, Math.sin(fa) * RAD, fz);
+        pts.push(Math.cos(fa + OFFSET) * RAD, Math.sin(fa + OFFSET) * RAD, fz);
+      }
+      // stacked base pair spanning the two strands
+      for (var k = 1; k <= 3; k++) {
+        var f = k / 4;
+        pts.push(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, z);
+      }
+    }
+    var R = 0;
+    for (var j = 0; j < pts.length; j += 3) {
+      R = Math.max(R, Math.hypot(pts[j], pts[j + 1], pts[j + 2]));
+    }
+    for (var m = 0; m < pts.length; m++) { pts[m] /= R; }
     return pts;
   }
 
-  function stroke(pts, hue, alpha, width) {
-    if (pts.length < 2 || alpha <= 0.002) { return; }
-    ctx.strokeStyle = rgba(hue, alpha);
-    ctx.lineWidth = width;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (var i = 1; i < pts.length; i++) { ctx.lineTo(pts[i].x, pts[i].y); }
-    ctx.stroke();
+  var CAPSID = null, DNA = null;
+
+  /* ── object construction ───────────────────────────────── */
+
+  function makeObject(kind) {
+    var o = {
+      kind: kind,
+      x: rand(0, 1) * W,
+      y: rand(0, 1) * H,
+      rx: rand(0, Math.PI * 2),
+      ry: rand(0, Math.PI * 2),
+      vrx: rand(-0.10, 0.10),
+      vry: rand(-0.13, 0.13),
+      depth: rand(0.45, 1.0)          // parallax: far things move slower
+    };
+    var base = Math.min(W, H);
+
+    if (kind === 'protein') {
+      o.pts = PDB[pick(['HVR', 'E43', 'ADK', 'CBT'])];
+      o.R = rand(0.055, 0.095) * base * o.depth;
+      o.atomR = 0.150;
+      o.hue = pick(['teal', 'cyan', 'green']);
+      o.alpha = 0.40;
+    } else if (kind === 'virus') {
+      o.pts = CAPSID;
+      o.R = rand(0.062, 0.098) * base * o.depth;
+      o.atomR = 0.105;
+      o.hue = pick(['cyan', 'pale']);
+      o.alpha = 0.40;
+    } else if (kind === 'dna') {
+      o.pts = DNA;
+      o.R = rand(0.078, 0.120) * base * o.depth;
+      o.atomR = 0.165;
+      o.hue = pick(['green', 'teal']);
+      o.alpha = 0.44;
+    } else {                          // bacterium
+      o.R = rand(0.095, 0.150) * base * o.depth;
+      o.hue = pick(['teal', 'green']);
+      o.alpha = 0.42;
+      o.speckle = [];
+      for (var i = 0; i < 26; i++) {
+        o.speckle.push(rand(-0.78, 0.78), rand(-0.30, 0.30), rand(0.6, 1.9));
+      }
+    }
+
+    o.vx = rand(-0.055, 0.055) * o.depth;
+    o.vy = rand(-0.030, 0.030) * o.depth;
+    return o;
   }
 
-  // nucleotide beads along a strand, spaced out so they read as residues
-  function beads(pts, hue, alpha, r, every) {
-    if (alpha <= 0.002) { return; }
-    ctx.fillStyle = rgba(hue, alpha);
-    for (var i = 0; i < pts.length; i += (every || 6)) {
-      ctx.beginPath();
-      ctx.arc(pts[i].x, pts[i].y, r, 0, Math.PI * 2);
-      ctx.fill();
+  function build() {
+    if (!CAPSID) { CAPSID = capsid(3); }
+    if (!DNA) { DNA = bdna(11); }
+
+    // scale the population to the viewport, capped so phones stay cheap
+    var n = Math.max(5, Math.min(10, Math.round((W * H) / 190000)));
+    var kinds = ['protein', 'dna', 'virus', 'protein', 'bacterium',
+                 'protein', 'virus', 'dna', 'protein', 'bacterium'];
+    objects = [];
+    for (var i = 0; i < n; i++) { objects.push(makeObject(kinds[i % kinds.length])); }
+
+    // spread them deterministically instead of trusting random
+    // placement not to clump
+    for (var j = 0; j < objects.length; j++) {
+      objects[j].x = ((j * 0.37 + 0.09) % 1) * W;
+      objects[j].y = ((j * 0.61 + 0.13) % 1) * H;
     }
   }
 
-  /* An snRNP drawn as a soft particle: outer envelope, an inner core,
-     and a few protein lobes. Deliberately abstract — this is a
-     silhouette, not a structural claim. */
-  function snRNP(x, y, r, hue, alpha, seed) {
-    if (alpha <= 0.004) { return; }
-    var g = ctx.createRadialGradient(x, y, r * 0.15, x, y, r);
-    g.addColorStop(0, rgba(hue, alpha * 0.55));
-    g.addColorStop(0.6, rgba(hue, alpha * 0.18));
-    g.addColorStop(1, rgba(hue, 0));
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
+  /* ── drawing ───────────────────────────────────────────── */
 
-    ctx.strokeStyle = rgba(hue, alpha * 0.5);
+  function drawAtoms(o) {
+    var pts = o.pts;
+    var n = pts.length / 3;
+    var cx = Math.cos(o.rx), sx = Math.sin(o.rx);
+    var cy = Math.cos(o.ry), sy = Math.sin(o.ry);
+    var sprite = sprites[o.hue];
+
+    var proj = o._proj || (o._proj = []);
+    var order = o._order || (o._order = []);
+
+    for (var i = 0; i < n; i++) {
+      var x = pts[i * 3], y = pts[i * 3 + 1], z = pts[i * 3 + 2];
+      var x1 = x * cy + z * sy;
+      var z1 = -x * sy + z * cy;
+      var y2 = y * cx - z1 * sx;
+      var z2 = y * sx + z1 * cx;
+      if (proj[i]) { proj[i].x = x1; proj[i].y = y2; proj[i].z = z2; }
+      else { proj[i] = { x: x1, y: y2, z: z2 }; }
+      order[i] = i;
+    }
+    proj.length = n;
+    order.length = n;
+    // painter's algorithm — back to front, so nearer atoms occlude
+    order.sort(function (a, b) { return proj[a].z - proj[b].z; });
+
+    var rad = o.atomR * o.R;
+    for (var k = 0; k < n; k++) {
+      var p = proj[order[k]];
+      var front = (p.z + 1) / 2;                    // 0 back → 1 front
+      var s = rad * (0.80 + 0.34 * front);          // cheap perspective
+      ctx.globalAlpha = o.alpha * (0.22 + 0.78 * front);
+      ctx.drawImage(sprite, o.x + p.x * o.R - s, o.y + p.y * o.R - s, s * 2, s * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* A bacterium is a cell, not a molecule — drawn as an outlined
+     rod with a membrane, a nucleoid and cytoplasmic speckles,
+     rather than as a molecular surface. */
+  function drawBacterium(o) {
+    var L = o.R, Rw = o.R * 0.40;
+    var hue = HUES[o.hue];
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.ry * 0.35);
+
+    ctx.beginPath();
+    ctx.moveTo(-L + Rw, -Rw);
+    ctx.lineTo(L - Rw, -Rw);
+    ctx.arc(L - Rw, 0, Rw, -Math.PI / 2, Math.PI / 2);
+    ctx.lineTo(-L + Rw, Rw);
+    ctx.arc(-L + Rw, 0, Rw, Math.PI / 2, -Math.PI / 2);
+    ctx.closePath();
+
+    var g = ctx.createLinearGradient(0, -Rw, 0, Rw);
+    g.addColorStop(0, 'rgba(' + hue + ',' + (o.alpha * 0.16) + ')');
+    g.addColorStop(1, 'rgba(' + hue + ',' + (o.alpha * 0.05) + ')');
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(' + hue + ',' + (o.alpha * 0.85) + ')';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(' + hue + ',' + (o.alpha * 0.55) + ')';     // ribosomes
+    for (var i = 0; i < o.speckle.length; i += 3) {
+      ctx.beginPath();
+      ctx.arc(o.speckle[i] * L * 0.86, o.speckle[i + 1] * Rw * 1.6,
+              o.speckle[i + 2], 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.strokeStyle = 'rgba(' + hue + ',' + (o.alpha * 0.42) + ')';   // nucleoid
     ctx.lineWidth = 1.6;
     ctx.beginPath();
-    ctx.arc(x, y, r * 0.62, 0, Math.PI * 2);
+    for (var s = 0; s <= 40; s++) {
+      var f = s / 40;
+      var px = (-0.55 + 1.10 * f) * L;
+      var py = Math.sin(f * Math.PI * 3 + o.rx) * Rw * 0.46;
+      if (s === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
+    }
     ctx.stroke();
 
-    // protein lobes — deliberately irregular. Evenly spaced equal circles
-    // read as a flower motif, not a ribonucleoprotein.
-    for (var i = 0; i < 6; i++) {
-      var h1 = Math.sin(seed * 12.9898 + i * 78.233) * 43758.5453;
-      var h2 = Math.sin(seed * 39.3468 + i * 11.135) * 24634.6345;
-      var j1 = h1 - Math.floor(h1), j2 = h2 - Math.floor(h2);
-      var a = seed + i * (Math.PI * 2 / 6) + (j1 - 0.5) * 0.9;
-      var lr = r * (0.16 + 0.20 * j2);
-      var dist = r * (0.30 + 0.32 * j1);
-      var lx = x + Math.cos(a) * dist, ly = y + Math.sin(a) * dist;
-      ctx.fillStyle = rgba(hue, alpha * 0.10);
-      ctx.strokeStyle = rgba(hue, alpha * 0.30);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(lx, ly, lr, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-    }
-  }
-
-  function drawSplicing(t) {
-    var phase = (t % CYCLE) / CYCLE;
-
-    // ── stage envelopes (all 0→1) ──
-    var appear  = ease(clamp01(phase / 0.10));                       // strand fades in
-    var dock    = ease(clamp01((phase - 0.14) / 0.16));              // snRNPs arrive
-    var lariat  = ease(clamp01((phase - 0.34) / 0.20));              // loop closes
-    var ligate  = ease(clamp01((phase - 0.56) / 0.14));              // exons join
-    var release = ease(clamp01((phase - 0.68) / 0.16));              // intron leaves
-    var fade    = 1 - ease(clamp01((phase - 0.90) / 0.10));          // reset
-
-    var A = fade;                                                    // master alpha
-    if (A <= 0.004) { return; }
-
-    var g5 = backbone(U_5SS, t), gB = backbone(U_BP, t), g3 = backbone(U_3SS, t);
-
-    // exon 1 slides right to meet the 3' splice site as the exons ligate
-    var joinDx = (g3.x - g5.x) * ligate;
-
-    // the excised lariat drifts up and away once released
-    var relDx = release * 0.22 * W;
-    var relDy = release * 0.22 * H;
-    var relA  = (1 - release);
-
-    // ── intron / lariat ──
-    var intron = strandPoints(U_5SS, U_3SS, t, lariat, relDx, relDy);
-    stroke(intron, TEAL, (0.55 + 0.35 * lariat) * A * relA, 2.6 + 0.9 * lariat);
-    beads(intron, TEAL, 0.52 * A * relA, 2.2, 7);
-
-    // branch-point adenosine — the nucleophile, marked while it matters
-    if (lariat > 0.02 && relA > 0.02) {
-      var bx = gB.x + relDx, by = gB.y + relDy;
-      ctx.fillStyle = rgba(CYAN, 0.95 * A * relA * lariat);
-      ctx.beginPath();
-      ctx.arc(bx, by, 5.0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = rgba(CYAN, 0.60 * A * relA * lariat);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(bx, by, 11, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    // ── exons ──
-    var ex1 = strandPoints(0, U_5SS, t, 0, joinDx, 0);
-    var ex2 = strandPoints(U_3SS, 1, t, 0, 0, 0);
-    var exonA = A * (0.68 + 0.28 * ligate);
-    stroke(ex1, CYAN, exonA, 3.8);
-    stroke(ex2, GREEN, exonA, 3.8);
-    beads(ex1, CYAN, exonA * 0.85, 2.9, 6);
-    beads(ex2, GREEN, exonA * 0.85, 2.9, 6);
-
-    // the new exon–exon junction lights up briefly
-    if (ligate > 0.55) {
-      var jf = ease(clamp01((ligate - 0.55) / 0.45));
-      var jg = ctx.createRadialGradient(g3.x, g3.y, 0, g3.x, g3.y, 46);
-      jg.addColorStop(0, rgba(GREEN, 0.55 * A * jf));
-      jg.addColorStop(1, rgba(GREEN, 0));
-      ctx.fillStyle = jg;
-      ctx.beginPath();
-      ctx.arc(g3.x, g3.y, 46, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // ── snRNPs ──
-    // each drifts in from off-screen, sits on its site, then leaves
-    var occupancy = dock * (1 - release);
-    var glide = 1 - dock;
-    var breathe = Math.sin(t * 0.7) * 2.2;
-
-    var sites = [
-      { g: g5, r: 78, hue: CYAN,  seed: 0.4, from: { x: -0.25 * W, y: 1.15 * H } },
-      { g: gB, r: 68, hue: TEAL,  seed: 1.9, from: { x:  1.25 * W, y:  0.25 * H } },
-      { g: { x: (g5.x + gB.x) / 2, y: (g5.y + gB.y) / 2 + 74 }, r: 96, hue: GREEN, seed: 3.1,
-        from: { x: 0.5 * W, y: 1.3 * H } }
-    ];
-
-    for (var i = 0; i < sites.length; i++) {
-      var s = sites[i];
-      var px = lerp(s.from.x, s.g.x, dock) + relDx * release;
-      var py = lerp(s.from.y, s.g.y, dock) + relDy * release + breathe;
-      snRNP(px, py, s.r + glide * 18, s.hue, 1.15 * A * occupancy, s.seed);
-    }
-  }
-
-  /* ════════════════════════════════════════════════════════
-     SCENE 2 — TRUE-SCALE MICROBE COMPARISON
-     ════════════════════════════════════════════════════════ */
-
-  /* Sizes are real, in micrometres, and every organism is drawn with the
-     SAME px-per-micron factor — that is the whole point. Values are
-     conventional textbook figures for typical specimens; real cells vary. */
-  var ORGANISMS = [
-    { name: 'Influenza virion', um: 0.10, kind: 'virus',  hue: CYAN  },
-    { name: 'Bacteriophage T4', um: 0.20, kind: 'phage',  hue: CYAN  },
-    { name: 'Mitochondrion',    um: 1.00, kind: 'mito',   hue: TEAL  },
-    { name: 'E. coli',          um: 2.00, kind: 'rod',    hue: TEAL  },
-    { name: 'S. cerevisiae',    um: 5.00, kind: 'yeast',  hue: GREEN },
-    { name: 'Red blood cell',   um: 7.50, kind: 'rbc',    hue: GREEN }
-  ];
-
-  var MAX_UM = 7.5;
-  var pxPerUm = 1;
-  var bugs = [];
-
-  function scaleLayout() {
-    // largest organism spans ~19% of the smaller viewport dimension
-    pxPerUm = (0.28 * Math.min(W, H)) / MAX_UM;
-
-    bugs = [];
-    var lanes = ORGANISMS.length;
-    for (var i = 0; i < lanes; i++) {
-      var o = ORGANISMS[i];
-      bugs.push({
-        o: o,
-        x: ((i * 0.37 + 0.08) % 1) * W,
-        y: (i + 0.5) / lanes * H + rand(-0.05, 0.05) * H,
-        vx: rand(-0.10, -0.03) * (0.4 + 0.6 * (MAX_UM - o.um) / MAX_UM),
-        spin: rand(-0.05, 0.05),
-        rot: rand(0, Math.PI * 2),
-        bob: rand(0, Math.PI * 2)
-      });
-    }
-  }
-
-  function drawVirus(r, hue, a) {
-    ctx.strokeStyle = rgba(hue, a * 0.9);
-    ctx.fillStyle = rgba(hue, a * 0.22);
-    ctx.lineWidth = Math.max(0.7, r * 0.12);
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    if (r < 5) { return; }                     // too small for spikes — honest
-    for (var i = 0; i < 14; i++) {
-      var ang = i * (Math.PI * 2 / 14);
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(ang) * r, Math.sin(ang) * r);
-      ctx.lineTo(Math.cos(ang) * r * 1.28, Math.sin(ang) * r * 1.28);
-      ctx.stroke();
-    }
-  }
-
-  function drawPhage(r, hue, a) {
-    ctx.strokeStyle = rgba(hue, a * 0.9);
-    ctx.lineWidth = Math.max(0.7, r * 0.1);
-    // icosahedral head, drawn as a hexagon
-    ctx.beginPath();
-    for (var i = 0; i < 6; i++) {
-      var ang = -Math.PI / 2 + i * (Math.PI / 3);
-      var px = Math.cos(ang) * r * 0.62, py = Math.sin(ang) * r * 0.62 - r * 0.30;
-      if (i === 0) { ctx.moveTo(px, py); } else { ctx.lineTo(px, py); }
-    }
-    ctx.closePath();
-    ctx.fillStyle = rgba(hue, a * 0.2);
-    ctx.fill();
-    ctx.stroke();
-    if (r < 5) { return; }
-    ctx.beginPath();                            // tail sheath
-    ctx.moveTo(0, r * 0.28);
-    ctx.lineTo(0, r * 0.92);
-    ctx.stroke();
-    for (var j = -1; j <= 1; j += 2) {          // tail fibres
-      ctx.beginPath();
-      ctx.moveTo(0, r * 0.92);
-      ctx.lineTo(j * r * 0.42, r * 1.18);
-      ctx.stroke();
-    }
-  }
-
-  function drawMito(r, hue, a) {
-    var rx = r, ry = r * 0.52;
-    ctx.strokeStyle = rgba(hue, a * 0.85);
-    ctx.fillStyle = rgba(hue, a * 0.16);
-    ctx.lineWidth = Math.max(0.7, r * 0.06);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    if (r < 10) { return; }
-    ctx.lineWidth = Math.max(0.6, r * 0.045);   // cristae
-    for (var i = -3; i <= 3; i++) {
-      var x = (i / 4) * rx * 0.8;
-      ctx.beginPath();
-      ctx.moveTo(x, -ry * 0.72);
-      ctx.quadraticCurveTo(x + rx * 0.16, 0, x, ry * 0.72);
-      ctx.stroke();
-    }
-  }
-
-  function drawRod(r, hue, a) {
-    // stadium shape: E. coli is ~2 µm long, ~0.5 µm wide
-    var L = r * 2, Rw = r * 0.5;
-    ctx.strokeStyle = rgba(hue, a * 0.85);
-    ctx.fillStyle = rgba(hue, a * 0.15);
-    ctx.lineWidth = Math.max(0.7, r * 0.06);
-    ctx.beginPath();
-    ctx.moveTo(-L / 2 + Rw, -Rw);
-    ctx.lineTo(L / 2 - Rw, -Rw);
-    ctx.arc(L / 2 - Rw, 0, Rw, -Math.PI / 2, Math.PI / 2);
-    ctx.lineTo(-L / 2 + Rw, Rw);
-    ctx.arc(-L / 2 + Rw, 0, Rw, Math.PI / 2, -Math.PI / 2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-    if (r < 12) { return; }
-    ctx.lineWidth = Math.max(0.5, r * 0.035);   // flagella
+    ctx.strokeStyle = 'rgba(' + hue + ',' + (o.alpha * 0.28) + ')';   // flagella
+    ctx.lineWidth = 1;
     for (var k = -1; k <= 1; k += 2) {
       ctx.beginPath();
-      ctx.moveTo(-L / 2, k * Rw * 0.4);
-      for (var s = 0; s < 22; s++) {
-        var f = s / 21;
-        ctx.lineTo(-L / 2 - f * L * 0.8, k * Rw * 0.4 + Math.sin(f * 12) * Rw * 0.45);
+      ctx.moveTo(-L, k * Rw * 0.35);
+      for (var q = 1; q <= 26; q++) {
+        var t = q / 26;
+        ctx.lineTo(-L - t * L * 0.85,
+                   k * Rw * 0.35 + Math.sin(t * 11 + o.rx) * Rw * 0.5);
       }
       ctx.stroke();
     }
+    ctx.restore();
   }
 
-  function drawYeast(r, hue, a) {
-    ctx.strokeStyle = rgba(hue, a * 0.85);
-    ctx.fillStyle = rgba(hue, a * 0.13);
-    ctx.lineWidth = Math.max(0.7, r * 0.05);
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.beginPath();                            // daughter bud
-    ctx.arc(r * 1.05, -r * 0.55, r * 0.44, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    if (r < 14) { return; }
-    ctx.beginPath();                            // nucleus
-    ctx.arc(-r * 0.2, r * 0.15, r * 0.3, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  function drawRBC(r, hue, a) {
-    ctx.strokeStyle = rgba(hue, a * 0.85);
-    ctx.fillStyle = rgba(hue, a * 0.12);
-    ctx.lineWidth = Math.max(0.7, r * 0.05);
-    ctx.beginPath();
-    ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    if (r < 12) { return; }
-    ctx.lineWidth = Math.max(0.6, r * 0.035);   // biconcave dimple
-    ctx.beginPath();
-    ctx.ellipse(0, 0, r * 0.52, r * 0.46, 0, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  var DRAW = { virus: drawVirus, phage: drawPhage, mito: drawMito,
-               rod: drawRod, yeast: drawYeast, rbc: drawRBC };
-
-  function drawScale(t) {
-    for (var i = 0; i < bugs.length; i++) {
-      var b = bugs[i];
-      var r = Math.max(1.1, (b.o.um * pxPerUm) / 2);
-      var a = 0.90;
-
-      ctx.save();
-      ctx.translate(b.x, b.y + Math.sin(t * 0.35 + b.bob) * 6);
-      ctx.rotate(b.rot);
-      DRAW[b.o.kind](r, b.o.hue, a);
-      ctx.restore();
-
-      // label — dim enough to sit behind page text, legible if you look
-      if (r > 3) {
-        ctx.fillStyle = rgba(DIM, 0.62);
-        ctx.font = '500 10px "DM Mono", ui-monospace, monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(b.o.name.toUpperCase() + '  ' + b.o.um + ' µm',
-                     b.x + r * 1.5 + 8, b.y + 4);
-      }
-    }
-    drawScaleBar();
-  }
-
-  function drawScaleBar() {
-    var um = 5;
-    var len = um * pxPerUm;
-    if (len < 20 || len > W * 0.5) { return; }
-    var x = 34, y = H - 42;
-    ctx.strokeStyle = rgba(DIM, 0.48);
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(x, y); ctx.lineTo(x + len, y);
-    ctx.moveTo(x, y - 4); ctx.lineTo(x, y + 4);
-    ctx.moveTo(x + len, y - 4); ctx.lineTo(x + len, y + 4);
-    ctx.stroke();
-    ctx.fillStyle = rgba(DIM, 0.50);
-    ctx.font = '500 10px "DM Mono", ui-monospace, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(um + ' µm  ·  TRUE RELATIVE SCALE', x, y - 10);
-  }
-
-  function stepScale(dt) {
-    for (var i = 0; i < bugs.length; i++) {
-      var b = bugs[i];
-      b.x += b.vx * dt * 0.06;
-      b.rot += b.spin * dt * 0.0006;
-      var pad = (b.o.um * pxPerUm) * 1.5 + 190;   // clear the label too
-      if (b.x < -pad) { b.x = W + pad; }
-      else if (b.x > W + pad) { b.x = -pad; }
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < objects.length; i++) {
+      var o = objects[i];
+      if (o.kind === 'bacterium') { drawBacterium(o); } else { drawAtoms(o); }
     }
   }
 
-  /* ════════════════════════════════════════════════════════
-     SHARED PLUMBING
-     ════════════════════════════════════════════════════════ */
+  function step(dt) {
+    for (var i = 0; i < objects.length; i++) {
+      var o = objects[i];
+      o.x += o.vx * dt * 0.06;
+      o.y += o.vy * dt * 0.06;
+      o.rx += o.vrx * dt * 0.0009;
+      o.ry += o.vry * dt * 0.0009;
+      var pad = o.R * 1.4 + 40;
+      if (o.x < -pad) { o.x = W + pad; } else if (o.x > W + pad) { o.x = -pad; }
+      if (o.y < -pad) { o.y = H + pad; } else if (o.y > H + pad) { o.y = -pad; }
+    }
+  }
+
+  /* ── plumbing ──────────────────────────────────────────── */
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 1.75);
@@ -505,24 +358,18 @@
     canvas.style.width  = W + 'px';
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (MODE === 'splicing') { splicingLayout(); } else { scaleLayout(); }
+    build();
   }
 
-  function render(t) {
-    ctx.clearRect(0, 0, W, H);
-    if (MODE === 'splicing') { drawSplicing(t); } else { drawScale(t); }
-  }
-
-  var last = 0, elapsed = 0, running = true, rafId = null;
+  var last = 0, running = true;
 
   function frameLoop(now) {
-    rafId = requestAnimationFrame(frameLoop);
+    requestAnimationFrame(frameLoop);
     if (!running) { return; }
     var dt = last ? Math.min(now - last, 60) : 16;
     last = now;
-    elapsed += dt / 1000;
-    if (MODE === 'scale') { stepScale(dt); }
-    render(elapsed);
+    step(dt);
+    render();
   }
 
   var resizeTimer = null;
@@ -530,7 +377,7 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       resize();
-      if (reduceMotion) { render(staticFrame()); }
+      if (reduceMotion) { render(); }
     }, 180);
   });
 
@@ -539,16 +386,12 @@
     last = 0;
   });
 
-  // a representative still: mid-lariat, so the reduced-motion frame is
-  // recognisable rather than an empty transcript
-  function staticFrame() { return CYCLE * 0.50; }
-
   function start() {
     document.body.insertBefore(canvas, document.body.firstChild);
-    MODE = document.getElementById('hero') ? 'splicing' : 'scale';
+    buildSprites();
     resize();
-    if (reduceMotion) { render(staticFrame()); }
-    else { rafId = requestAnimationFrame(frameLoop); }
+    if (reduceMotion) { render(); }
+    else { requestAnimationFrame(frameLoop); }
   }
 
   if (document.body) { start(); }
