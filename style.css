@@ -48,7 +48,7 @@ body {
 /* ── BACKGROUND LAYERS ──────────────────────────────────── */
 
 /* fixed background video, kept very faint (raise/lower --bg-video-opacity) */
-:root { --bg-video-opacity: 0.16; }
+:root { --bg-video-opacity: 0.30; }
 
 #bg-video {
   position: fixed;
@@ -791,3 +791,191 @@ body > section:not(#hero) > .container { padding-top: 5rem; padding-bottom: 5rem
   body > section:not(#hero) > .container { padding-top: 4rem; padding-bottom: 4rem; }
   .pub-card { padding: 1.5rem 1.4rem; }
 }
+
+
+/* ══════════════════════════════════════════════════════════
+   ONE-PAGE DOCUMENT LAYOUT
+   One centred column on top of the background video: intro,
+   then every section flows below it (like a classic academic
+   home page). The video shows at the sides and faintly
+   through the column.
+   ══════════════════════════════════════════════════════════ */
+html { scroll-padding-top: 4.4rem; }
+
+.page {
+  width: 100%;
+  max-width: 860px;
+  margin: 3.4rem auto 0;
+  flex: 1 0 auto;
+  background: rgba(5, 13, 24, 0.68);
+  border-left: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+  box-shadow: 0 0 90px rgba(0, 0, 0, 0.35);
+}
+
+/* intro: text left, photo right */
+.intro {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 3.2rem 2.5rem 3rem;
+}
+.page #hero.intro {          /* beat the old full-screen #hero rule */
+  min-height: 0;
+  max-width: none;
+  gap: 2rem;
+  padding: 3rem 2.5rem 2.8rem;
+}
+.intro-text { min-width: 0; }
+.intro .pill { padding: 0.4rem 0.8rem; font-size: 0.6rem; }
+.page .about-grid { justify-content: flex-start; }
+.page .about-text { max-width: none; }
+.intro h1 { font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: 1.05; }
+.intro h1 em { display: inline; }
+.intro .hero-tag { margin-bottom: 1.1rem; }
+.intro .hero-sub { margin-top: 1rem; }
+.intro .hero-links { margin-top: 1.4rem; }
+
+.intro-photo { position: relative; width: 200px; height: 250px; flex-shrink: 0; }
+.intro-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  filter: saturate(0.9) contrast(1.05) brightness(0.95);
+}
+.intro-photo .photo-badge { bottom: -12px; right: -12px; padding: 0.5rem 0.75rem; font-size: 0.55rem; }
+
+/* sections are plain blocks in the column, separated by a rule */
+.page section { border-top: 1px solid var(--border-soft); }
+.page .container { max-width: none; padding: 2.6rem 2.5rem; }
+
+.page h2,
+.page #publications h2,
+.page #highlights h2 {
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  margin-bottom: 1.1rem;
+}
+.page .lead {
+  margin: -0.5rem 0 1.3rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--accent3);
+}
+
+.page .exp-grid { grid-template-columns: 1fr; gap: 1rem; }
+.page .timeline-year-group { margin-bottom: 1.8rem; }
+
+.page footer {
+  border-top: 1px solid var(--border-soft);
+  background: rgba(5, 13, 24, 0.5);
+  padding: 1.8rem 2.5rem;
+}
+.page .footer-inner { max-width: none; }
+
+@media (max-width: 700px) {
+  .page { margin-top: 3.2rem; border-left: 0; border-right: 0; }
+  .page #hero.intro { grid-template-columns: 1fr; gap: 1.8rem; padding: 2rem 1.25rem 2.2rem; }
+  .intro-photo { order: -1; margin: 0 auto 0.6rem; width: 170px; height: 212px; }
+  .intro-text { text-align: center; }
+  .intro .hero-links { justify-content: center; }
+  .page .container { padding: 2rem 1.25rem; }
+  .page footer { padding: 1.6rem 1.25rem; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   LIGHT THEME — sky blue → white gradient
+   Later :root overrides the dark tokens above; everything that
+   used a token flips automatically, the rest is patched below.
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --bg:            #dff1fc;
+  --bg2:           #eef8fe;
+  --surface:       #ffffff;
+  --surface2:      #f2f9fe;
+  --surface-glass: rgba(255, 255, 255, 0.62);
+
+  --accent:        #0b6fa8;   /* sky-blue, strong enough for text on white */
+  --accent2:       #0f8a78;   /* teal */
+  --accent3:       #0a69a0;   /* links */
+  --accent-deep:   #0b5c8a;
+
+  --border:        rgba(11, 111, 168, 0.28);
+  --border-soft:   rgba(15, 60, 90, 0.14);
+
+  --text:          #1d3a4f;
+  --text-dim:      #4a6578;
+  --text-bright:   #0a2233;
+  --gold:          #b45309;
+
+  --glow:          0 0 40px rgba(11, 111, 168, 0.18);
+  --bg-video-opacity: 0.42;
+}
+
+/* the page itself: sky blue at the top fading to white */
+html { background: #ffffff; }
+body {
+  background: linear-gradient(180deg, #87ceeb 0%, #b9e1f7 38%, #e4f4fd 72%, #ffffff 100%) fixed;
+}
+/* soft white clouds instead of the dark teal wash; fine blue grid */
+body::before {
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 0%,  rgba(255, 255, 255, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 90% 12%, rgba(255, 255, 255, 0.40), transparent 70%);
+}
+body::after {
+  background-image:
+    linear-gradient(rgba(11, 111, 168, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 111, 168, 0.05) 1px, transparent 1px);
+}
+
+/* video: multiply keeps its dark structures (RNA, proteins) and lets its pale sky vanish into the gradient */
+#bg-video { mix-blend-mode: multiply; }
+
+nav { background: rgba(255, 255, 255, 0.72); }
+nav:has(.nav-links.open) { background: rgba(255, 255, 255, 0.96); }
+
+.page {
+  background: rgba(255, 255, 255, 0.60);
+  box-shadow: 0 0 70px rgba(11, 111, 168, 0.18);
+}
+.page footer { background: rgba(255, 255, 255, 0.55); }
+footer { background: rgba(255, 255, 255, 0.6); }
+
+.hero-tag { background: rgba(11, 111, 168, 0.08); }
+.pill { background: rgba(255, 255, 255, 0.6); color: var(--text); }
+.pill:hover { background: rgba(11, 111, 168, 0.10); color: var(--accent); box-shadow: 0 6px 20px rgba(11, 111, 168, 0.20); }
+.pill.primary { background: linear-gradient(100deg, var(--accent-deep), var(--accent)); color: #fff; }
+.pill.primary:hover { color: #fff; box-shadow: 0 8px 24px rgba(11, 111, 168, 0.35); }
+.photo-badge { color: #fff; background: linear-gradient(100deg, var(--accent-deep), var(--accent)); box-shadow: 0 10px 26px rgba(11, 111, 168, 0.35); }
+.intro-photo img { box-shadow: 0 16px 40px rgba(15, 60, 90, 0.30); filter: none; }
+
+.pub-card, .exp-card { background: rgba(255, 255, 255, 0.72); }
+.pub-card:hover { background: #ffffff; box-shadow: 0 14px 38px rgba(15, 60, 90, 0.18), 0 0 0 1px rgba(11, 111, 168, 0.20); }
+.exp-card:hover { box-shadow: 0 14px 34px rgba(15, 60, 90, 0.18); }
+.pub-authors strong { color: var(--accent2); }
+
+.edu-item::before { background: #ffffff; box-shadow: 0 0 12px rgba(11, 111, 168, 0.35); }
+.hl-item { border-bottom-color: rgba(15, 60, 90, 0.12); }
+.hl-item:hover { background: rgba(11, 111, 168, 0.06); }
+.hl-month, .section-label { background: rgba(11, 111, 168, 0.08); }
+.badge-award { background: rgba(217, 119, 6, 0.12); color: #92400e; border-color: rgba(217, 119, 6, 0.35); }
+.badge-milestone { background: rgba(15, 60, 90, 0.06); color: var(--text-dim); border-color: rgba(15, 60, 90, 0.18); }
+.about-text a { border-bottom-color: rgba(10, 105, 160, 0.40); }
+.hero-sub strong { color: var(--accent); }
+.nav-links a.active { color: var(--accent2); }
+.nav-brand:hover { color: var(--accent2); }
+
+/* ══════════════════════════════════════════════════════════
+   BOLD TEXT — everything bold, and the greys darker, so the
+   copy stays readable over the video.
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --text:     #0f2a3d;
+  --text-dim: #2f4c61;
+}
+body, nav, nav *, .page, .page *, footer, footer * { font-weight: 700; }
